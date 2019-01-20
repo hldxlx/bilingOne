@@ -21,7 +21,21 @@ import {AnotherProductService} from "./shared/another-product.service";
     BrowserModule,
     AppRoutingModule
   ],
-  providers: [ProductService,LoggerService,AnotherProductService],
+  providers: [{
+    provide:ProductService,
+    useFactory:(logger:LoggerService,appConfig)=>{
+      if(appConfig.isDev){
+        return new ProductService(logger);
+      }else{
+        return new AnotherProductService(logger);
+      }
+    },
+    deps:[LoggerService,"APP_CONFIG"]
+  },LoggerService,
+    {
+      provide:"APP_CONFIG",useValue:{isDev:true}
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
